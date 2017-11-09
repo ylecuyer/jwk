@@ -39,12 +39,17 @@ module JWK
     protected
 
     def decode_base64_int(str)
-      unspaced = str.gsub(/[[:space:]]/, '')
+      unspaced = pad64(str.gsub(/[[:space:]]/, ''))
       binary_n = Base64.urlsafe_decode64(unspaced)
 
       binary_n.chars.inject(0) do |val, char|
         (val << 8) | char[0].ord
       end
+    end
+
+    def pad64(s)
+      len = s.length
+      len % 4 == 0 ? s : s + '=' * (4 - len % 4)
     end
 
     def pem_base64(content)

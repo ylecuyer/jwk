@@ -32,7 +32,7 @@ module JWK
     end
 
     def k
-      Base64.urlsafe_decode64(@key['k'])
+      Base64.urlsafe_decode64(pad64(@key['k']))
     end
   end
 end
