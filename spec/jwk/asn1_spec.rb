@@ -1,7 +1,7 @@
 describe JWK::ASN1 do
   describe '.rsa_public_key' do
     let(:known_asn) do
-      Base64.decode64('MBowDQYJKoZIhvcNAQEBBQADCQAwBgIBAQIBAg')
+      Base64.decode64('MBowDQYJKoZIhvcNAQEBBQADCQAwBgIBAQIBAg==')
     end
 
     let(:known_big_asn) do
@@ -37,15 +37,15 @@ describe JWK::ASN1 do
 
   describe '.ec_private_key' do
     let(:known_p256_asn) do
-      Base64.decode64('MBoCAQEEAaCgCgYIKoZIzj0DAQehBgMEAAQCAw')
+      Base64.decode64('MBoCAQEEAaCgCgYIKoZIzj0DAQehBgMEAAQCAw==')
     end
 
     let(:known_p384_asn) do
-      Base64.decode64('MBcCAQEEAaCgBwYFK4EEACKhBgMEAAQCAw')
+      Base64.decode64('MBcCAQEEAaCgBwYFK4EEACKhBgMEAAQCAw==')
     end
 
     let(:known_p521_asn) do
-      Base64.decode64('MBcCAQEEAaCgBwYFK4EEACOhBgMEAAQCAw')
+      Base64.decode64('MBcCAQEEAaCgBwYFK4EEACOhBgMEAAQCAw==')
     end
 
     it 'generates valid ASN1 for a P-256 EC Private Key' do
