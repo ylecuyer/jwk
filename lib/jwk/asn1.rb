@@ -79,7 +79,7 @@ module JWK
 
       def raw_integer_encoding(n)
         # find out how many octets are required to encode it
-        num_octets = n.zero? ? 1 : (Math.log(n) / Math.log(256)).to_i + 1
+        num_octets = (n.to_s(16).length / 2.0).ceil
 
         # encode the low num_octets bytes of the integer.
         shifted = n << 8
