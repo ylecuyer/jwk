@@ -43,6 +43,29 @@ module JWK
       end
     end
 
+    class << self
+      def from_openssl(k)
+        if k.private?
+          key = { 'kty' => 'RSA' }.merge(key_params(k, 'n', 'e', 'd', 'p', 'q', 'dmp1', 'dmq1', 'iqmp'))
+          key['dp'] = key.delete('dmp1')
+          key['dq'] = key.delete('dmq1')
+          key['qi'] = key.delete('iqmp')
+        else
+          key = { 'kty' => 'RSA' }.merge(key_params(k, 'n', 'e'))
+        end
+
+        self.new(key)
+      end
+
+      private
+
+      def key_params(key, *params)
+        Hash[params.map do |p|
+          [p, encode_base64_int(key.params[p].to_i)]
+        end]
+      end
+    end
+
     private
 
     def to_asn

@@ -1,6 +1,19 @@
 module JWK
   class Key
     class << self
+      def from_pem(pem)
+        key = OpenSSL::PKey.read(pem)
+        from_openssl(key)
+      end
+
+      def from_openssl(key)
+        if key.is_a?(OpenSSL::PKey::RSA)
+          RSAKey.from_openssl(key)
+        elsif key.is_a?(OpenSSL::PKey::EC)
+          ECKey.from_openssl(key)
+        end
+      end
+
       def from_json(json)
         key = JSON.parse(json)
         validate_kty!(key['kty'])
@@ -44,6 +57,20 @@ module JWK
 
       binary_n.chars.inject(0) do |val, char|
         (val << 8) | char[0].ord
+      end
+    end
+
+    class << self
+      def encode_base64_int(n)
+        num_octets = (n.to_s(16).length / 2.0).ceil
+
+        # encode the low num_octets bytes of the integer.
+        shifted = n << 8
+        data = Array.new(num_octets) do
+          ((shifted >>= 8) & 0xFF).chr
+        end.join.reverse
+
+        Base64.urlsafe_encode64(data)
       end
     end
 
