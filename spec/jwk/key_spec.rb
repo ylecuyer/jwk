@@ -48,9 +48,7 @@ describe JWK::Key do
         key.generate_key
         jwk = JWK::Key.from_openssl(key)
 
-        unless defined?(JRUBY_VERSION)
-          expect(jwk.to_pem).to eq key.to_pem
-        end
+        expect(jwk.to_pem).to eq key.to_pem unless defined?(JRUBY_VERSION)
       rescue NameError => e
         raise e unless defined?(JRUBY_VERSION)
       end

@@ -42,8 +42,9 @@ describe JWK::ECKey do
 
       begin
         expect(key.to_openssl_key).to be_a OpenSSL::PKey::EC
-      rescue Exception
+      rescue Exception => e
         # This is expected to fail on old jRuby versions
+        raise e unless defined?(JRUBY_VERSION)
       end
     end
   end

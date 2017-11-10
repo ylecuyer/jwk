@@ -7,6 +7,7 @@ require 'jwk/ec_key'
 require 'jwk/key'
 require 'jwk/oct_key'
 require 'jwk/rsa_key'
+require 'jwk/utils'
 require 'jwk/version'
 
 module JWK

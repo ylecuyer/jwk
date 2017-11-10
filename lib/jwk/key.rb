@@ -51,34 +51,6 @@ module JWK
 
     protected
 
-    def decode_base64_int(str)
-      unspaced = pad64(str.gsub(/[[:space:]]/, ''))
-      binary_n = Base64.urlsafe_decode64(unspaced)
-
-      binary_n.chars.inject(0) do |val, char|
-        (val << 8) | char[0].ord
-      end
-    end
-
-    class << self
-      def encode_base64_int(n)
-        num_octets = (n.to_s(16).length / 2.0).ceil
-
-        # encode the low num_octets bytes of the integer.
-        shifted = n << 8
-        data = Array.new(num_octets) do
-          ((shifted >>= 8) & 0xFF).chr
-        end.join.reverse
-
-        Base64.urlsafe_encode64(data)
-      end
-    end
-
-    def pad64(s)
-      len = s.length
-      len % 4 == 0 ? s : s + '=' * (4 - len % 4)
-    end
-
     def pem_base64(content)
       Base64.strict_encode64(content).scan(/.{1,64}/).join("\n")
     end

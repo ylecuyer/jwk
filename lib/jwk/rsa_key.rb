@@ -39,7 +39,7 @@ module JWK
 
     %w[n e d p q dp dq qi].each do |part|
       define_method(part) do
-        decode_base64_int(@key[part]) if @key[part]
+        Utils.decode_ub64_int(@key[part]) if @key[part]
       end
     end
 
@@ -61,7 +61,7 @@ module JWK
 
       def key_params(key, *params)
         Hash[params.map do |p|
-          [p, encode_base64_int(key.params[p].to_i)]
+          [p, Utils.encode_ub64_int(key.params[p].to_i)]
         end]
       end
     end
