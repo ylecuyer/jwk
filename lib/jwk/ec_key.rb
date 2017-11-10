@@ -52,9 +52,8 @@ module JWK
         raise NotImplementedError, 'Cannot convert EC compressed public key' unless pb[0..1] == '04'
 
         pb = pb[2..-1]
-        x = pb[0...pb.length/2].scan(/.{2}/).map { |n| n.to_i(16).chr }.join
-        y = pb[pb.length/2..-1].scan(/.{2}/).map { |n| n.to_i(16).chr }.join
-
+        x = pb[0...pb.length / 2].scan(/.{2}/).map { |n| n.to_i(16).chr }.join
+        y = pb[pb.length / 2..-1].scan(/.{2}/).map { |n| n.to_i(16).chr }.join
 
         names = { 'secp256r1' => 'P-256', 'secp384r1' => 'P-384', 'secp521r1' => 'P-521' }
         crv = names[k.group.curve_name]
@@ -69,7 +68,7 @@ module JWK
           'y' => Base64.urlsafe_encode64(y)
         }
 
-        self.new(key)
+        new(key)
       end
     end
   end

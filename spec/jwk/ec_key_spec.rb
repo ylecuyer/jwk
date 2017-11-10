@@ -1,14 +1,14 @@
 describe JWK::ECKey do
   let(:private_jwk) do
-    File.read("spec/support/ec_private.json")
+    File.read('spec/support/ec_private.json')
   end
 
   let(:public_jwk) do
-    File.read("spec/support/ec_public.json")
+    File.read('spec/support/ec_public.json')
   end
 
   let(:private_pem) do
-    File.read("spec/support/ec_private.pem")
+    File.read('spec/support/ec_private.pem')
   end
 
   describe '#initialize' do

@@ -1,22 +1,22 @@
 describe JWK::RSAKey do
   let(:private_jwk) do
-    File.read("spec/support/rsa_private.json")
+    File.read('spec/support/rsa_private.json')
   end
 
   let(:public_jwk) do
-    File.read("spec/support/rsa_public.json")
+    File.read('spec/support/rsa_public.json')
   end
 
   let(:partial_jwk) do
-    File.read("spec/support/rsa_partial.json")
+    File.read('spec/support/rsa_partial.json')
   end
 
   let(:private_pem) do
-    File.read("spec/support/rsa_private.pem")
+    File.read('spec/support/rsa_private.pem')
   end
 
   let(:public_pem) do
-    File.read("spec/support/rsa_public.pem")
+    File.read('spec/support/rsa_public.pem')
   end
 
   describe '#to_pem' do

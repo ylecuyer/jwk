@@ -54,7 +54,7 @@ module JWK
           key = { 'kty' => 'RSA' }.merge(key_params(k, 'n', 'e'))
         end
 
-        self.new(key)
+        new(key)
       end
 
       private

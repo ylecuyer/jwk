@@ -1,6 +1,6 @@
 describe JWK::OctKey do
   let(:jwk) do
-    File.read("spec/support/oct.json")
+    File.read('spec/support/oct.json')
   end
 
   describe '#to_pem' do
