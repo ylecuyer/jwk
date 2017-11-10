@@ -7,10 +7,10 @@ rvm:
   - 2.1.10
   - 2.2.8
   - 2.3.5
-  - 2.4.2
 
-after_script:
-  - bundle exec codeclimate-test-reporter
-
-env:
-  CODECLIMATE_REPO_TOKEN: 5d5a47900abd78d4b430435e4948a78c9b065c20e2f4be4ecb0a084413d75ca0 
+matrix:
+  include:
+    - rvm: 2.4.2
+      env: CODECLIMATE_REPO_TOKEN=5d5a47900abd78d4b430435e4948a78c9b065c20e2f4be4ecb0a084413d75ca0
+      after_script:
+        - bundle exec codeclimate-test-reporter
