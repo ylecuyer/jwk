@@ -28,19 +28,27 @@ describe JWK::Key do
     end
 
     it 'creates an ECKey for EC keys' do
-      key = OpenSSL::PKey::EC.new('secp384r1')
-      key.generate_key
-      jwk = JWK::Key.from_openssl(key)
+      begin
+        key = OpenSSL::PKey::EC.new('secp384r1')
+        key.generate_key
+        jwk = JWK::Key.from_openssl(key)
 
-      expect(jwk).to be_a JWK::ECKey
+        expect(jwk).to be_a JWK::ECKey
+      rescue NameError => e
+        raise e unless JRUBY_VERSION
+      end
     end
 
     it 'creates an ECKey for EC keys that resolves to the same parameters' do
-      key = OpenSSL::PKey::EC.new('secp384r1')
-      key.generate_key
-      jwk = JWK::Key.from_openssl(key)
+      begin
+        key = OpenSSL::PKey::EC.new('secp384r1')
+        key.generate_key
+        jwk = JWK::Key.from_openssl(key)
 
-      expect(jwk.to_pem).to eq key.to_pem
+        expect(jwk.to_pem).to eq key.to_pem
+      rescue NameError => e
+        raise e unless JRUBY_VERSION
+      end
     end
   end
 
