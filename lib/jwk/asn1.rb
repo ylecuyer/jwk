@@ -15,6 +15,9 @@ module JWK
         _, raw_x = raw_integer_encoding(x)
         _, raw_y = raw_integer_encoding(y)
 
+        raw_x = pad_coord_for_crv(crv, raw_x)
+        raw_y = pad_coord_for_crv(crv, raw_y)
+
         object_id = object_id_for_crv(crv)
 
         sequence(
@@ -35,6 +38,17 @@ module JWK
           "\x06\x05\x2B\x81\x04\x00\x22"
         when 'P-521'
           "\x06\x05\x2B\x81\x04\x00\x23"
+        end
+      end
+
+      def pad_coord_for_crv(crv, coord)
+        case crv
+        when 'P-256'
+          coord.rjust(32, "\x00")
+        when 'P-384'
+          coord.rjust(48, "\x00")
+        when 'P-521'
+          coord.rjust(64, "\x00")
         end
       end
 
