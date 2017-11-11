@@ -27,7 +27,7 @@ describe JWK::Key do
       expect(jwk.to_pem).to eq key.to_pem
     end
 
-    it 'creates an ECKey for EC keys' do
+    it 'creates an ECKey for EC private keys' do
       begin
         key = OpenSSL::PKey::EC.new('secp384r1')
         key.generate_key
@@ -42,7 +42,7 @@ describe JWK::Key do
     # jRuby 9k OpenSSL generates a bad PEM file with private key only, skipping
     # the public part. This is in contrast with all other OpenSSL implementations.
     # And it makes this test fail.
-    it 'creates an ECKey for EC keys that resolves to the same parameters' do
+    it 'creates an ECKey for EC private keys that resolves to the same parameters' do
       begin
         key = OpenSSL::PKey::EC.new('secp384r1')
         key.generate_key
@@ -53,6 +53,26 @@ describe JWK::Key do
         raise e unless defined?(JRUBY_VERSION)
       end
     end
+
+    it 'creates an ECKey for EC public keys' do
+      begin
+        key = OpenSSL::PKey::EC.new('secp384r1')
+        key.generate_key
+        jwk = JWK::Key.from_openssl(key.public_key)
+
+        expect(jwk).to be_a JWK::ECKey
+      rescue NameError => e
+        raise e unless defined?(JRUBY_VERSION)
+      end
+    end
+
+    it 'creates an ECKey for EC public keys that resolves to the same parameters' do
+      key = OpenSSL::PKey::EC.new('secp384r1')
+      key.generate_key
+      jwk = JWK::Key.from_openssl(key.public_key)
+
+      expect(jwk.to_openssl_key).to eq key.public_key
+    end
   end
 
   describe '.from_pem' do
@@ -61,6 +81,17 @@ describe JWK::Key do
       jwk = JWK::Key.from_pem(pem)
 
       expect(jwk).to be_a JWK::RSAKey
+    end
+
+    it 'generates an ECKey for EC Keys' do
+      begin
+        pem = OpenSSL::PKey::EC.new('prime256v1').generate_key.to_pem
+        jwk = JWK::Key.from_pem(pem)
+
+        expect(jwk).to be_a JWK::ECKey
+      rescue ArgumentError => e
+        raise e unless defined?(JRUBY_VERSION)
+      end
     end
   end
 end

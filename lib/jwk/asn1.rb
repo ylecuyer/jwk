@@ -11,20 +11,14 @@ module JWK
         sequence(integer(0), *args.map { |n| integer(n) })
       end
 
-      def ec_private_key(crv, d, x, y)
-        _, raw_x = raw_integer_encoding(x)
-        _, raw_y = raw_integer_encoding(y)
-
-        raw_x = pad_coord_for_crv(crv, raw_x)
-        raw_y = pad_coord_for_crv(crv, raw_y)
-
+      def ec_private_key(crv, d, raw_public_key)
         object_id = object_id_for_crv(crv)
 
         sequence(
           integer(1),
           integer_octet_string(d),
           context_specific(true, 0, object_id),
-          context_specific(true, 1, bit_string("\x04#{raw_x}#{raw_y}"))
+          context_specific(true, 1, bit_string(raw_public_key))
         )
       end
 
@@ -38,17 +32,6 @@ module JWK
           "\x06\x05\x2B\x81\x04\x00\x22"
         when 'P-521'
           "\x06\x05\x2B\x81\x04\x00\x23"
-        end
-      end
-
-      def pad_coord_for_crv(crv, coord)
-        case crv
-        when 'P-256'
-          coord.rjust(32, "\x00")
-        when 'P-384'
-          coord.rjust(48, "\x00")
-        when 'P-521'
-          coord.rjust(64, "\x00")
         end
       end
 

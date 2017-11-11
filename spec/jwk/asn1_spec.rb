@@ -41,36 +41,50 @@ describe JWK::ASN1 do
 
   describe '.ec_private_key' do
     let(:known_p256_asn) do
-      Base64.decode64('MFgCAQEEAaCgCgYIKoZIzj0DAQehRANCAAQAAAAAAAAAAAAAAAAAAAAA' +
-                      'AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+      Base64.decode64('MFgCAQEEAaCgCgYIKoZIzj0DAQehRANCAAQAAAAAAAAAAAAAAAAAAAAA' \
+                      'AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' \
                       'AAAAAAAD')
     end
 
     let(:known_p384_asn) do
-      Base64.decode64('MHUCAQEEAaCgBwYFK4EEACKhZANiAAQAAAAAAAAAAAAAAAAAAAAAAAAA' +
-                      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA' +
+      Base64.decode64('MHUCAQEEAaCgBwYFK4EEACKhZANiAAQAAAAAAAAAAAAAAAAAAAAAAAAA' \
+                      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA' \
                       'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM=')
     end
 
     let(:known_p521_asn) do
-      Base64.decode64('MIGXAgEBBAGgoAcGBSuBBAAjoYGFA4GCAAQAAAAAAAAAAAAAAAAAAAAA' +
-                      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
-                      'AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+      Base64.decode64('MIGXAgEBBAGgoAcGBSuBBAAjoYGFA4GCAAQAAAAAAAAAAAAAAAAAAAAA' \
+                      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' \
+                      'AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' \
                       'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAw==')
     end
 
+    def pad_coord_for_crv(crv, coord)
+      coord.rjust(JWK::ECKey::COORD_SIZE[crv], "\x00")
+    end
+
+    def raw_public_key(crv, x, y)
+      raw_x = JWK::Utils.int_to_binary(x)
+      raw_y = JWK::Utils.int_to_binary(y)
+
+      raw_x = pad_coord_for_crv(crv, raw_x)
+      raw_y = pad_coord_for_crv(crv, raw_y)
+
+      "\x04#{raw_x}#{raw_y}"
+    end
+
     it 'generates valid ASN1 for a P-256 EC Private Key' do
-      result = JWK::ASN1.ec_private_key('P-256', 0xA0, 2, 3)
+      result = JWK::ASN1.ec_private_key('P-256', 0xA0, raw_public_key('P-256', 2, 3))
       expect(result).to eq(known_p256_asn)
     end
 
     it 'generates valid ASN1 for a P-384 EC Private Key' do
-      result = JWK::ASN1.ec_private_key('P-384', 0xA0, 2, 3)
+      result = JWK::ASN1.ec_private_key('P-384', 0xA0, raw_public_key('P-384', 2, 3))
       expect(result).to eq(known_p384_asn)
     end
 
     it 'generates valid ASN1 for a P-521 EC Private Key' do
-      result = JWK::ASN1.ec_private_key('P-521', 0xA0, 2, 3)
+      result = JWK::ASN1.ec_private_key('P-521', 0xA0, raw_public_key('P-521', 2, 3))
       expect(result).to eq(known_p521_asn)
     end
   end

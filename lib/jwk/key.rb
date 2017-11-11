@@ -3,13 +3,16 @@ module JWK
     class << self
       def from_pem(pem)
         key = OpenSSL::PKey.read(pem)
+        if key.is_a?(OpenSSL::PKey::EC)
+          $stderr.puts('WARNING: EC Keys have bugs on jRuby') if defined?(JRUBY_VERSION)
+        end
         from_openssl(key)
       end
 
       def from_openssl(key)
         if key.is_a?(OpenSSL::PKey::RSA)
           RSAKey.from_openssl(key)
-        elsif key.is_a?(OpenSSL::PKey::EC)
+        elsif key.is_a?(OpenSSL::PKey::EC) || key.is_a?(OpenSSL::PKey::EC::Point)
           ECKey.from_openssl(key)
         end
       end
