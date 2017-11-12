@@ -62,8 +62,17 @@ describe JWK::ECKey do
     # See: http://blogs.adobe.com/security/2017/03/critical-vulnerability-uncovered-in-json-encryption.html
     # See: https://github.com/asanso/jwe-sender/blob/master/jwe-sender.js
     it 'is protected against Invalid Curve Attack' do
-      k1 = "{\"kty\":\"EC\",\"x\":\"WJiccv00-OX6udOeWKfiRhZzzkoAnfG9JOIDprQYpH8\",\"y\":\"tAjB2i8hs-7i6GLRcgMTtCoPbybmoPRWhS9qUBf2ldc\",\"crv\":\"P-256\"}"
-      k2 = "{\"kty\":\"EC\",\"x\":\"XOXGQ9_6QCvBg3u8vCI-UdBvICAEcNNBrfqd7tG7oQ4\",\"y\":\"hQoWNotnNzKlwiCneJkLIqDnTNw7IsdBC53VUqVjVJc\",\"crv\":\"P-256\"}"
+      k1 = {
+        'kty' => 'EC',
+        'x' => 'WJiccv00-OX6udOeWKfiRhZzzkoAnfG9JOIDprQYpH8', 'y' => 'tAjB2i8hs-7i6GLRcgMTtCoPbybmoPRWhS9qUBf2ldc',
+        'crv' => 'P-256'
+      }.to_json
+
+      k2 = {
+        'kty' => 'EC',
+        'x' => 'XOXGQ9_6QCvBg3u8vCI-UdBvICAEcNNBrfqd7tG7oQ4', 'y' => 'hQoWNotnNzKlwiCneJkLIqDnTNw7IsdBC53VUqVjVJc',
+        'crv' => 'P-256'
+      }.to_json
 
       jwk1 = JWK::Key.from_json(k1)
       jwk2 = JWK::Key.from_json(k2)

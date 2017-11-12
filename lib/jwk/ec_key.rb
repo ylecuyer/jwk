@@ -45,7 +45,7 @@ module JWK
         OpenSSL::PKey.read(to_pem)
       else
         group = OpenSSL::PKey::EC::Group.new(self.class::CURVE_NAMES.key(crv))
-        OpenSSL::PKey::EC::Point.new(group, OpenSSL::BN.new(raw_public_key.unpack("H*")[0], 16))
+        OpenSSL::PKey::EC::Point.new(group, OpenSSL::BN.new(raw_public_key.unpack('H*')[0], 16))
       end
     end
 
