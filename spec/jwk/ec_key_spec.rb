@@ -77,8 +77,14 @@ describe JWK::ECKey do
       jwk1 = JWK::Key.from_json(k1)
       jwk2 = JWK::Key.from_json(k2)
 
-      expect { jwk1.to_openssl_key }.to raise_error(OpenSSL::PKey::EC::Point::Error)
-      expect { jwk2.to_openssl_key }.to raise_error(OpenSSL::PKey::EC::Point::Error)
+      begin
+        expect { jwk1.to_openssl_key }.to raise_error(OpenSSL::PKey::EC::Point::Error)
+        expect { jwk2.to_openssl_key }.to raise_error(OpenSSL::PKey::EC::Point::Error)
+      rescue NameError => e
+        # This is expected to fail on old jRuby versions
+        # Not because it's unsafe, but because EC were not implemented.
+        raise e unless defined?(JRUBY_VERSION)
+      end
     end
   end
 
