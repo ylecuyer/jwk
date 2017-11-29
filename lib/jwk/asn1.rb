@@ -2,66 +2,71 @@ module JWK
   class ASN1
     class << self
       def rsa_public_key(n, e)
-        pubkey = bit_string(sequence(integer(n), integer(e)))
-        sequence(rsa_header, pubkey)
+        pubkey = bit_string(sequence(integer(n), integer(e)).to_der)
+        sequence(rsa_header, pubkey).to_der
       end
 
       def rsa_private_key(*args)
         raise ArgumentError('Some pieces missing for RSA Private Key') unless args.length == 8
-        sequence(integer(0), *args.map { |n| integer(n) })
+        sequence(integer(0), *args.map { |n| integer(n) }).to_der
       end
 
       def ec_private_key(crv, d, raw_public_key)
-        object_id = object_id_for_crv(crv)
+        object_id = object_id_for_crv(crv).to_der
 
         sequence(
           integer(1),
           integer_octet_string(d),
           context_specific(true, 0, object_id),
-          context_specific(true, 1, bit_string(raw_public_key))
-        )
+          context_specific(true, 1, bit_string(raw_public_key).to_der)
+        ).to_der
       end
 
       private
 
       def object_id_for_crv(crv)
-        case crv
+        id = case crv
         when 'P-256'
-          "\x06\x08\x2A\x86\x48\xCE\x3D\x03\x01\x07"
+          '1.2.840.10045.3.1.7'
         when 'P-384'
-          "\x06\x05\x2B\x81\x04\x00\x22"
+          '1.3.132.0.34'
         when 'P-521'
-          "\x06\x05\x2B\x81\x04\x00\x23"
+          '1.3.132.0.35'
         end
+
+        object_id(id)
+      end
+
+      def object_id(id)
+        OpenSSL::ASN1::ObjectId.new(id)
+      end
+
+      def null
+        OpenSSL::ASN1::Null.new(nil)
       end
 
       def rsa_header
-        "\x30\x0D\x06\x09\x2A\x86\x48\x86\xF7\x0D\x01\x01\x01\x05\x00".force_encoding('ASCII-8BIT')
+        sequence(
+          object_id('1.2.840.113549.1.1.1'),
+          null
+        )
       end
 
       def bit_string(data)
-        "\x03" + asn_length(data.length + 1) + "\x00" + data
+        OpenSSL::ASN1::BitString.new(data)
       end
 
       def sequence(*items)
-        data = items.join
-        "\x30" + asn_length(data.length) + data
+        OpenSSL::ASN1::Sequence.new(items)
       end
 
       def integer(n)
-        len, data = raw_integer_encoding(n)
-
-        if data[0].ord & 0x80 != 0
-          data = "\x00" + data
-          len += 1
-        end
-
-        "\x02" + asn_length(len) + data
+        OpenSSL::ASN1::Integer.new(n)
       end
 
       def integer_octet_string(n)
-        len, data = raw_integer_encoding(n)
-        "\x04" + asn_length(len) + data
+        _, data = raw_integer_encoding(n)
+        OpenSSL::ASN1::OctetString.new(data)
       end
 
       def asn_length(n)
