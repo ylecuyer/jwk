@@ -12,19 +12,19 @@ module JWK
       end
 
       def ec_private_key(crv, d, raw_public_key)
-        object_id = object_id_for_crv(crv).to_der
+        obj_id = obj_id_for_crv(crv).to_der
 
         sequence(
           integer(1),
           integer_octet_string(d),
-          context_specific(true, 0, object_id),
+          context_specific(true, 0, obj_id),
           context_specific(true, 1, bit_string(raw_public_key).to_der)
         ).to_der
       end
 
       private
 
-      def object_id_for_crv(crv)
+      def obj_id_for_crv(crv)
         id = case crv
         when 'P-256'
           '1.2.840.10045.3.1.7'
@@ -34,10 +34,10 @@ module JWK
           '1.3.132.0.35'
         end
 
-        object_id(id)
+        obj_id(id)
       end
 
-      def object_id(id)
+      def obj_id(id)
         OpenSSL::ASN1::ObjectId.new(id)
       end
 
@@ -47,7 +47,7 @@ module JWK
 
       def rsa_header
         sequence(
-          object_id('1.2.840.113549.1.1.1'),
+          obj_id('1.2.840.113549.1.1.1'),
           null
         )
       end
