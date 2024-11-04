@@ -34,7 +34,7 @@ module JWK
       end
 
       def encode_ub64_int(n)
-        Base64.urlsafe_encode64(Utils.int_to_binary(n))
+        Base64.urlsafe_encode64(Utils.int_to_binary(n), padding: false)
       end
     end
   end
