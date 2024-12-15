@@ -29,8 +29,7 @@ describe JWK::Key do
 
     it 'creates an ECKey for EC private keys' do
       begin
-        key = OpenSSL::PKey::EC.new('secp384r1')
-        key.generate_key
+        key = OpenSSL::PKey::EC.generate('secp384r1')
         jwk = JWK::Key.from_openssl(key)
 
         expect(jwk).to be_a JWK::ECKey
@@ -44,8 +43,7 @@ describe JWK::Key do
     # And it makes this test fail.
     it 'creates an ECKey for EC private keys that resolves to the same parameters' do
       begin
-        key = OpenSSL::PKey::EC.new('secp384r1')
-        key.generate_key
+        key = OpenSSL::PKey::EC.generate('secp384r1')
         jwk = JWK::Key.from_openssl(key)
 
         expect(jwk.to_pem).to eq key.to_pem unless defined?(JRUBY_VERSION)
@@ -56,8 +54,7 @@ describe JWK::Key do
 
     it 'creates an ECKey for EC public keys' do
       begin
-        key = OpenSSL::PKey::EC.new('secp384r1')
-        key.generate_key
+        key = OpenSSL::PKey::EC.generate('secp384r1')
         jwk = JWK::Key.from_openssl(key.public_key)
 
         expect(jwk).to be_a JWK::ECKey
@@ -68,8 +65,7 @@ describe JWK::Key do
 
     it 'creates an ECKey for EC public keys that resolves to the same parameters' do
       begin
-        key = OpenSSL::PKey::EC.new('secp384r1')
-        key.generate_key
+        key = OpenSSL::PKey::EC.generate('secp384r1')
         jwk = JWK::Key.from_openssl(key.public_key)
 
         expect(jwk.to_openssl_key).to eq key.public_key
@@ -89,7 +85,7 @@ describe JWK::Key do
 
     it 'generates an ECKey for EC Keys' do
       begin
-        pem = OpenSSL::PKey::EC.new('prime256v1').generate_key.to_pem
+        pem = OpenSSL::PKey::EC.generate('prime256v1').to_pem
         jwk = JWK::Key.from_pem(pem)
 
         expect(jwk).to be_a JWK::ECKey
